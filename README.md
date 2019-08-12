@@ -5,8 +5,9 @@ A simple golang script that will take some template information and process it.
 | Argument | Description                      |
 |----------|----------------------------------|
 | -h       | Display help message and exit.   |
-| -t       | Path to template file to use.    |
-| -u       | Username to replace _user_ with. |
+| -r       | Path to template file to use.    |
+| -t       | Variable to replace \_target\_ with and to use for `dig` and `whois` commands. |
+| -u       | Username to replace \_user\_ with. |
 | -o       | Optional output file name.       |
 
 
