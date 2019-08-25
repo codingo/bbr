@@ -1,6 +1,13 @@
 # bbr
 A simple golang script that will take some template information and process it over the command line. Useful for piping reporting from one application to another (such as an automatic submission tool).
 
+To add:
+
+`_curl_`
+`_joke_`
+`_program_`
+`_wayback_`
+
 # Arguments
 | Argument | Description                      |
 |----------|----------------------------------|
