@@ -8,6 +8,8 @@ To add:
 `_program_`
 `_wayback_`
 
+Arguments `-tL`
+
 # Arguments
 | Argument | Description                      |
 |----------|----------------------------------|
