@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"bytes"
 	"crypto/sha256"
 	"errors"
@@ -8,25 +9,29 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"os"
 	"os/exec"
 	"strings"
+
 )
 
 // Command line flags
 var (
-	target       = flag.String("t", "", "Target domain e.g www.google.com (required)")
-	username     = flag.String("u", "", "Username (required)")
+	target       = flag.String("t", "", "Target domain e.g www.google.com (required) ")
+	username     = flag.String("u", "", "Username ")
 	outputFile   = flag.String("o", "", "Output file name. (optional)")
-	templateFile = flag.String("r", "", "Template file to process. (required)")
+	templateFile = flag.String("r", "", "Template file to process.")
+	program      = flag.String("p", "", "Program name. ")
+	researcher   = flag.String("re", "", "Researcher name. ")
 )
 
-// whoIs return the whois output of the _target_
+// whoIs return the whois output of the target
 func whoIs() ([]byte, error) {
 	out, _ := exec.Command("whois", *target).Output()
 	return out, nil
 }
 
-// nameServers return output of "dig NS @8.8.8.8 +trace"
+// nameServers return output of "dig NS @8.8.8.8 -trace"
 func nameServers() ([]byte, error) {
 	out, err := exec.Command("dig", "NS", "@8.8.8.8", "trace").Output()
 	return out, err
@@ -38,6 +43,12 @@ func digTarget() ([]byte, error) {
 	return out, err
 }
 
+// curlTarget return the output of the dig command for target
+func curlTarget() ([]byte, error) {
+	out, err := exec.Command("curl", *target).Output()
+	return out, err
+}
+
 // sha256Username returns the SHA256 value of username
 func sha256Username() []byte {
 	hash := sha256.New()
@@ -46,14 +57,12 @@ func sha256Username() []byte {
 	return []byte(fmt.Sprintf("%x", md))
 }
 
+// validateFlags validates if all the required flags are set
 func validateFlags() error {
 	var err []string
 
 	if *target == "" {
 		err = append(err, "Target is required.")
-	}
-	if *username == "" {
-		err = append(err, "Username is required.")
 	}
 	if *templateFile == "" {
 		err = append(err, "Template file path is required.")
@@ -65,11 +74,33 @@ func validateFlags() error {
 
 }
 
+func inputFlags(content []byte) {
+	reader := bufio.NewReader(os.Stdin)
+	if *username == "" && bytes.Contains(content, []byte("_username_")) {
+		fmt.Print("A _username_ is used in this template, please specify: ")
+		*username, _ = reader.ReadString('\n')
+		*username = strings.TrimSpace(*username)
+	}
+	if *researcher == "" && bytes.Contains(content, []byte("_researcher_")) {
+		fmt.Print("A _researcher_ is used in this template, please specify: ")
+		*researcher, _ = reader.ReadString('\n')
+		*researcher = strings.TrimSpace(*researcher)
+
+	}
+	if *program == "" && bytes.Contains(content, []byte("_program_")) {
+		fmt.Print("A _program_ is used in this template, please specify: ")
+		*program, _ = reader.ReadString('\n')
+		*program = strings.TrimSpace(*program)
+	}
+}
+
+// checkError if error is not nil and exiting if error found
 func checkError(err error) {
 	if err != nil {
 		log.Fatal(err)
 	}
 }
+
 
 func main() {
 	flag.Parse()
@@ -77,32 +108,53 @@ func main() {
 	err := validateFlags()
 	checkError(err)
 
-	// read template file
+	// Reading template file
 	content, err := ioutil.ReadFile(*templateFile)
 	checkError(err)
 
-	whoIsTarget, err := whoIs()
-	checkError(err)
+	inputFlags(content)
 
-	digTarget, err := digTarget()
-	checkError(err)
-
-	nameServerTarget, err := nameServers()
-	checkError(err)
-
-	md := sha256Username()
-
-	content = bytes.Replace(content, []byte("_whois_"), whoIsTarget, -1)
+	// Replacing the values
 	content = bytes.Replace(content, []byte("_target_"), []byte(*target), -1)
-	content = bytes.Replace(content, []byte("_dig_"), digTarget, -1)
-	content = bytes.Replace(content, []byte("_sha_"), md, -1)
 	content = bytes.Replace(content, []byte("_username_"), []byte(*username), -1)
-	content = bytes.Replace(content, []byte("_nameservers_"), nameServerTarget, -1)
+	content = bytes.Replace(content, []byte("_program_"), []byte(*program), -1)
+	content = bytes.Replace(content, []byte("_researcher_"), []byte(*researcher), -1)
 
-	fmt.Printf("%s", content)
+	if bytes.Contains(content, []byte("_whois_")) {
+		whoIsTarget, err := whoIs()
+		checkError(err)
+		content = bytes.Replace(content, []byte("_whois_"), whoIsTarget, -1)
+	}
 
+	if bytes.Contains(content, []byte("_dig_")) {
+		digTarget, err := digTarget()
+		checkError(err)
+		content = bytes.Replace(content, []byte("_dig_"), digTarget, -1)
+	}
+
+	if bytes.Contains(content, []byte("_nameservers_")) {
+		nameServerTarget, err := nameServers()
+		checkError(err)
+		content = bytes.Replace(content, []byte("_nameservers_"), nameServerTarget, -1)
+	}
+
+	if bytes.Contains(content, []byte("_curl_")) {
+		curl, err := curlTarget()
+		checkError(err)
+		content = bytes.Replace(content, []byte("_curl_"), curl, -1)
+	}
+
+	if bytes.Contains(content, []byte("_sha_")) {
+		md := sha256Username()
+		content = bytes.Replace(content, []byte("_sha_"), md, -1)
+	}
 	// If output flag is set
 	if *outputFile != "" {
 		ioutil.WriteFile(*outputFile, content, 0677)
+		fmt.Printf("File saved to %v", *outputFile)
+	} else {
+		// Printing the data to console
+		fmt.Printf("%s\n", content)
+
 	}
 }
