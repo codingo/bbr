@@ -43,6 +43,12 @@ func digTarget() ([]byte, error) {
 	return out, err
 }
 
+// dig-TXT-Target return the output of the dig command for target
+func digTXTTarget() ([]byte, error) {
+	out, err := exec.Command("dig", "TXT", *target).Output()
+	return out, err
+}
+
 // curlTarget return the output of the dig command for target
 func curlTarget() ([]byte, error) {
 	out, err := exec.Command("curl", *target).Output()
@@ -130,6 +136,12 @@ func main() {
 		digTarget, err := digTarget()
 		checkError(err)
 		content = bytes.Replace(content, []byte("_dig_"), digTarget, -1)
+	}
+	
+	if bytes.Contains(content, []byte("_dig-txt_")) {
+		digTXTTarget, err := digTXTTarget()
+		checkError(err)
+		content = bytes.Replace(content, []byte("_dig-txt_"), digTXTTarget, -1)
 	}
 
 	if bytes.Contains(content, []byte("_nameservers_")) {
