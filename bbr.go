@@ -151,7 +151,7 @@ func main() {
 	// If output flag is set
 	if *outputFile != "" {
 		ioutil.WriteFile(*outputFile, content, 0677)
-		fmt.Printf("File saved to %v", *outputFile)
+		fmt.Printf("File saved to %v\n", *outputFile)
 	} else {
 		// Printing the data to console
 		fmt.Printf("%s\n", content)
