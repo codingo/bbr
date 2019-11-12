@@ -31,9 +31,9 @@ func whoIs() ([]byte, error) {
 	return out, nil
 }
 
-// nameServers return output of "dig NS @8.8.8.8 -trace"
+// nameServers return output of "dig NS @8.8.8.8 +trace"
 func nameServers() ([]byte, error) {
-	out, err := exec.Command("dig", "NS", "@8.8.8.8", "trace").Output()
+	out, err := exec.Command("dig", "NS", "@8.8.8.8", *target, "+trace").Output()
 	return out, err
 }
 
