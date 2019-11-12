@@ -46,6 +46,12 @@ func sha256Username() []byte {
 	return []byte(fmt.Sprintf("%x", md))
 }
 
+// curlTarget returns the curl output for target
+func curlTarget() ([]byte, error) {
+        out, err := exec.Command("curl", *target).Output()
+        return out, err
+}
+
 func validateFlags() error {
 	var err []string
 
@@ -90,6 +96,9 @@ func main() {
 	nameServerTarget, err := nameServers()
 	checkError(err)
 
+        curlTarget, err := curlTarget()
+        checkError(err)
+
 	md := sha256Username()
 
 	content = bytes.Replace(content, []byte("_whois_"), whoIsTarget, -1)
@@ -98,6 +107,7 @@ func main() {
 	content = bytes.Replace(content, []byte("_sha_"), md, -1)
 	content = bytes.Replace(content, []byte("_username_"), []byte(*username), -1)
 	content = bytes.Replace(content, []byte("_nameservers_"), nameServerTarget, -1)
+        content = bytes.Replace(content, []byte("_curl"), curlTarget, -1)
 
 	fmt.Printf("%s", content)
 
