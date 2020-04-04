@@ -30,3 +30,6 @@ It will then process the text file, and make the following replacements (not all
 | \_nameservers\_ | Replace with the output of "dig NS @8.8.8.8 _target_"     |
 | \_dig\_         | Replace with the value of "dig @8.8.8.8 _target_"         |
 | \_whois\_       | Replace with the whois output of the target parameter.    |
+| \_sha\_ | Replace with the SHA256 value of the username parameter |
+| \_dig-txt\_ | Replace with the value of DNS TXT records |
+| \_curl\_ | Replace with the request response of the -t argument |
