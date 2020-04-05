@@ -4,15 +4,16 @@ import (
 	"bufio"
 	"bytes"
 	"crypto/sha256"
+	"encoding/json"
 	"errors"
 	"flag"
 	"fmt"
 	"io/ioutil"
 	"log"
+	"net/http"
 	"os"
 	"os/exec"
 	"strings"
-
 )
 
 // Command line flags
@@ -25,15 +26,71 @@ var (
 	researcher   = flag.String("re", "", "Researcher name. ")
 )
 
-// whoIs return the whois output of the target
+// Joke from https://official-joke-api.appspot.com/random_joke
+type Joke struct {
+	ID        int64  `json:"id"`
+	Type      string `json:"type"`
+	Setup     string `json:"setup"`
+	Punchline string `json:"punchline"`
+}
+
+// WayBack gets url from https://archive.org/help/wayback_api.php
+type WayBack struct {
+	URL string `json:"url"`
+}
+
+// getJoke gets joke from https://official-joke-api.appspot.com/random_joke
+
+func getJoke(joke *Joke) error {
+	res, err := http.Get("https://official-joke-api.appspot.com/random_joke")
+
+	if err != nil {
+		return err
+	}
+
+	body, err := ioutil.ReadAll(res.Body)
+
+	if err != nil {
+		return err
+	}
+
+	json.Unmarshal(body, &joke)
+	return nil
+}
+
+// getWayBackURL gets url from https://archive.org/wayback/available?url=%target%
+func getWayBackURL() ([]byte, error) {
+	res, err := http.Get(fmt.Sprintf("https://archive.org/wayback/available?url=%v", *target))
+
+	if err != nil {
+		return nil, err
+	}
+
+	body, err := ioutil.ReadAll(res.Body)
+
+	if err != nil {
+		return nil, err
+	}
+	var wayback WayBack
+	json.Unmarshal(body, &wayback)
+	return []byte(wayback.URL), err
+}
+
+// whoIs return the whois output of the targ
 func whoIs() ([]byte, error) {
 	out, _ := exec.Command("whois", *target).Output()
 	return out, nil
 }
 
-// nameServers return output of "dig NS @8.8.8.8 +trace"
+// getTargetWayBackUrl return the wayback url from the endpoint https://archive.org/help/wayback_api.php
+func getTargetWayBackURL() ([]byte, error) {
+	out, _ := exec.Command("whois", *target).Output()
+	return out, nil
+}
+
+// nameServers return output of "dig NS @8.8.8.8 -trace"
 func nameServers() ([]byte, error) {
-	out, err := exec.Command("dig", "NS", "@8.8.8.8", *target, "+trace").Output()
+	out, err := exec.Command("dig", "NS", "@8.8.8.8", "trace").Output()
 	return out, err
 }
 
@@ -43,13 +100,7 @@ func digTarget() ([]byte, error) {
 	return out, err
 }
 
-// dig-TXT-Target return the output of the dig command for target
-func digTXTTarget() ([]byte, error) {
-	out, err := exec.Command("dig", "TXT", *target).Output()
-	return out, err
-}
-
-// curlTarget return the output of the dig command for target
+// digTarget return the output of the dig command for target
 func curlTarget() ([]byte, error) {
 	out, err := exec.Command("curl", *target).Output()
 	return out, err
@@ -107,7 +158,7 @@ func checkError(err error) {
 	}
 }
 
-
+// Starting point of the program
 func main() {
 	flag.Parse()
 
@@ -137,12 +188,6 @@ func main() {
 		checkError(err)
 		content = bytes.Replace(content, []byte("_dig_"), digTarget, -1)
 	}
-	
-	if bytes.Contains(content, []byte("_dig-txt_")) {
-		digTXTTarget, err := digTXTTarget()
-		checkError(err)
-		content = bytes.Replace(content, []byte("_dig-txt_"), digTXTTarget, -1)
-	}
 
 	if bytes.Contains(content, []byte("_nameservers_")) {
 		nameServerTarget, err := nameServers()
@@ -160,6 +205,29 @@ func main() {
 		md := sha256Username()
 		content = bytes.Replace(content, []byte("_sha_"), md, -1)
 	}
+	var joke Joke
+
+	if bytes.Contains(content, []byte("_joke_")) {
+		err := getJoke(&joke)
+		checkError(err)
+		content = bytes.Replace(content, []byte("_joke_"), []byte(joke.Setup), -1)
+	}
+
+	if bytes.Contains(content, []byte("_punchline_")) {
+		// If joke is not processed before
+		if (Joke{}) == joke {
+			err := getJoke(&joke)
+			checkError(err)
+		}
+		content = bytes.Replace(content, []byte("_punchline_"), []byte(joke.Punchline), -1)
+	}
+
+	if bytes.Contains(content, []byte("_wayback_")) {
+		url, err := getWayBackURL()
+		checkError(err)
+		content = bytes.Replace(content, []byte("_wayback_"), url, -1)
+	}
+
 	// If output flag is set
 	if *outputFile != "" {
 		ioutil.WriteFile(*outputFile, content, 0677)
