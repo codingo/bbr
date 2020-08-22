@@ -1,5 +1,5 @@
 # bbr
-A simple golang script that will take some template information and process it over the command line. Useful for piping reporting from one application to another (such as an automatic submission tool).
+A command line application to taketemplate information and process it over the command line. Useful for piping reporting from one application to another (such as an automatic submission tool).
 
 # Arguments
 | Argument | Description                      |
