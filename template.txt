@@ -1,0 +1,26 @@
+ # Summary
+The domain _target_ was found to have a CNAME that was pointing to an unregistered domain.
+
+It was possible to register this domain, and to host content on the _target_ website. Given this domain is attributed to _program_(see: attribution) I hosted only a SHA256 string of my researcher account, _researcher).
+
+This can be verified by using the following in the terminal:
+
+```
+echo "_username_" | sha256sum
+```
+Which should present the resulting string:
+```
+_sha_
+```
+Which matches what I placed on _target_ for verification.
+
+This has also been stored on the Wayback engine, in case this is resolved before this submission is able to be triaged: _wayback_
+# Attribution
+A whois of the domain _target_ shows a direct match to other domains relating to _program_, showing this as beloning to _program_:
+
+```
+_whois_
+```
+
+# Recommendation
+Remove the CNAME associated with _target_, or decomission the domain entirely with a redirection to other domains of _program_. If you would like the domain I've claimed to be transferred to you, please don't hestitate to request it within this submission.
