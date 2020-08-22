@@ -15,6 +15,7 @@ _sha_
 Which matches what I placed on _target_ for verification.
 
 This has also been stored on the Wayback engine, in case this is resolved before this submission is able to be triaged: _wayback_
+
 # Attribution
 A whois of the domain _target_ shows a direct match to other domains relating to _program_, showing this as beloning to _program_:
 
@@ -24,3 +25,10 @@ _whois_
 
 # Recommendation
 Remove the CNAME associated with _target_, or decomission the domain entirely with a redirection to other domains of _program_. If you would like the domain I've claimed to be transferred to you, please don't hestitate to request it within this submission.
+
+# Joke
+Triage is a tough gig, here's a joke to lighten the load!
+
+_joke_
+
+... _punchline_
