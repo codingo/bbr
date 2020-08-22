@@ -44,13 +44,13 @@ It was possible to register this domain, and to host content on the _target_ web
 
 This can be verified by using the following in the terminal:
 
-```
+\```
 echo "_username_" | sha256sum
-```
+\```
 Which should present the resulting string:
-```
+\```
 _sha_
-```
+\```
 Which matches what I placed on _target_ for verification.
 
 This has also been stored on the Wayback engine, in case this is resolved before this submission is able to be triaged: _wayback_
@@ -58,9 +58,9 @@ This has also been stored on the Wayback engine, in case this is resolved before
 # Attribution
 A whois of the domain _target_ shows a direct match to other domains relating to _program_, showing this as beloning to _program_:
 
-```
+\```
 _whois_
-```
+\```
 
 # Recommendation
 Remove the CNAME associated with _target_, or decomission the domain entirely with a redirection to other domains of _program_. If you would like the domain I've claimed to be transferred to you, please don't hestitate to request it within this submission.
@@ -87,13 +87,13 @@ It was possible to register this domain, and to host content on the example.com 
 
 This can be verified by using the following in the terminal:
 
-```
+\```
 echo "codingo" | sha256sum
-```
+\```
 Which should present the resulting string:
-```
+\```
 10c989bbd4963c465e0941acd70833d5579ca846f5a68eadc8bcf63801b3993b
-```
+\```
 Which matches what I placed on example.com for verification.
 
 This has also been stored on the Wayback engine, in case this is resolved before this submission is able to be triaged: example.com
@@ -101,7 +101,7 @@ This has also been stored on the Wayback engine, in case this is resolved before
 # Attribution
 A whois of the domain example.com shows a direct match to other domains relating to Example, showing this as beloning to Example:
 
-```
+\```
    Domain Name: EXAMPLE.COM
    Registry Domain ID: 2336799_DOMAIN_COM-VRSN
    Registrar WHOIS Server: whois.iana.org
@@ -175,7 +175,7 @@ created:      1992-01-01
 source:       IANA
 
 
-```
+\```
 
 # Recommendation
 Remove the CNAME associated with example.com, or decomission the domain entirely with a redirection to other domains of Example. If you would like the domain I've claimed to be transferred to you, please don't hestitate to request it within this submission.
