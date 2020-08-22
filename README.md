@@ -1,6 +1,8 @@
 # bbr
 A command line application to taketemplate information and process it over the command line. Useful for piping reporting from one application to another (such as an automatic submission tool).
 
+[![License](https://img.shields.io/badge/license-GPL3-_red.svg)](https://www.gnu.org/licenses/gpl-3.0.en.html) [![Twitter](https://img.shields.io/badge/twitter-@codingo__-blue.svg)](https://twitter.com/codingo_)
+
 # Arguments
 | Argument | Description                      |
 |----------|----------------------------------|
