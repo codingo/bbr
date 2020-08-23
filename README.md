@@ -35,7 +35,7 @@ BBR will then process the text file, and make the following replacements (not al
 | \_joke\_ | Replace with a joke |
 | \_punchline\_ | Replace with the punchline for said joke |
 
-# Funcionality
+# Functionality
 BBR takes a provided template file and makes replacements throughout that file with provided arguments. For example, the following template file (stored in this repository as `template.txt`:
 
 ```
