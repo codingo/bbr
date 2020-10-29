@@ -11,6 +11,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	neturl "net/url"
 	"os"
 	"os/exec"
 	"strings"
@@ -19,6 +20,7 @@ import (
 // Command line flags
 var (
 	target       = flag.String("t", "", "Target domain e.g www.google.com (required) ")
+	target_url   = flag.String("url", "", "Target URL ")
 	username     = flag.String("u", "", "Username ")
 	outputFile   = flag.String("o", "", "Output file name. (optional)")
 	templateFile = flag.String("r", "", "Template file to process.")
@@ -176,6 +178,10 @@ func main() {
 	content = bytes.Replace(content, []byte("_username_"), []byte(*username), -1)
 	content = bytes.Replace(content, []byte("_program_"), []byte(*program), -1)
 	content = bytes.Replace(content, []byte("_researcher_"), []byte(*researcher), -1)
+	content = bytes.Replace(content, []byte("_url_"), []byte(*target_url), -1)
+	
+	u, err := neturl.Parse(*target_url)
+	content = bytes.Replace(content, []byte("_host_"), []byte(u.Host), -1)
 
 	if bytes.Contains(content, []byte("_whois_")) {
 		whoIsTarget, err := whoIs()
