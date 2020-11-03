@@ -9,11 +9,10 @@ An open source tool to aid in command line driven generation of bug bounty repor
 | -h       | Display help message and exit   |
 | -r       | Path to template file to use    |
 | -t       | Variable to replace \_target\_ with and to use for `dig` and `whois` commands. |
-| -u       | Username to replace \_user\_ with |
+| -u       | Username to replace \_username\_ with |
 | -o       | Output file name. (optional)       |
 | -p | Variable to replace \_program\_ (optional) |
 | -re | Variable to replace \_researcher\_ (optional) |
-| -u | Variable to replace \_username\_ (optional) |
 
 BBR will then process the text file, and make the following replacements (not all fields may be present, some will be present more than once):
 
@@ -23,7 +22,6 @@ BBR will then process the text file, and make the following replacements (not al
 | \_username\_    | Replace with the value of the -u argument                |
 | \_program\_      | Replace with the value of the -p argument                |
 | \_researcher\_ | Replace with the value of the -re argument |
-| \_username\_ | Replace with the value of the -u argument |
 | \_sha\_         | Replace with the SHA256 encoded value of the -u argument |
 | \_nameservers\_ | Replace with the output of "dig NS @8.8.8.8 _target_"     |
 | \_dig\_         | Replace with the value of "dig @8.8.8.8 _target_"         |
